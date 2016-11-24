@@ -45,9 +45,9 @@ public class PhotosListActivity extends AppCompatActivity {
 
         PhotosDataSource localDataSource = new PhotosLocalDataSource(new PhotosDBHelper(getApplicationContext()));
 
-//        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+
+        //This whole block of Retrofit init should be moved to another part, I would probably use Dagger2.
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
@@ -69,7 +69,6 @@ public class PhotosListActivity extends AppCompatActivity {
                         return chain.proceed(request);
                     }
                 })
-//                .addInterceptor(loggingInterceptor)
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
