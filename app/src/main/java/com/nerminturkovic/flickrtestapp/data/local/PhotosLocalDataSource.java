@@ -3,7 +3,6 @@ package com.nerminturkovic.flickrtestapp.data.local;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.nerminturkovic.flickrtestapp.data.PhotosDataSource;
 import com.nerminturkovic.flickrtestapp.data.local.database.PhotosContracts;
@@ -12,21 +11,13 @@ import com.nerminturkovic.flickrtestapp.data.model.Location;
 import com.nerminturkovic.flickrtestapp.data.model.Owner;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
 import com.nerminturkovic.flickrtestapp.data.model.PhotoSize;
-import com.nerminturkovic.flickrtestapp.data.remote.network.model.Photos;
-import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.functions.Func3;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by nerko on 21/11/16.

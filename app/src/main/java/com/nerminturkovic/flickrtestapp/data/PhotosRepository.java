@@ -1,13 +1,10 @@
 package com.nerminturkovic.flickrtestapp.data;
 
-import android.util.Log;
-
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
 
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
