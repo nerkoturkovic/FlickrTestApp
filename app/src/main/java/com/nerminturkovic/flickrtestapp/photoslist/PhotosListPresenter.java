@@ -3,6 +3,7 @@ package com.nerminturkovic.flickrtestapp.photoslist;
 import com.nerminturkovic.flickrtestapp.data.PhotosRepository;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import rx.Observer;
@@ -17,12 +18,12 @@ public class PhotosListPresenter implements PhotosListContract.Presenter {
 
     private PhotosRepository repository;
 
-    private PhotosListContract.PhotosListView view;
+    private WeakReference<PhotosListContract.PhotosListView> view;
 
     public PhotosListPresenter(PhotosRepository repository, PhotosListContract.PhotosListView view) {
         this.repository = repository;
-        this.view = view;
-        this.view.setPresenter(this);
+        this.view = new WeakReference<>(view);
+        this.view.get().setPresenter(this);
     }
 
     @Override
@@ -52,8 +53,11 @@ public class PhotosListPresenter implements PhotosListContract.Presenter {
 
                     @Override
                     public void onNext(List<Photo> photos) {
-                        view.showPhotos(photos);
-                        view.hideProgressBar();
+                        PhotosListContract.PhotosListView view = PhotosListPresenter.this.view.get();
+                        if (view != null) {
+                            view.showPhotos(photos);
+                            view.hideProgressBar();
+                        }
                     }
                 });
     }

@@ -26,9 +26,11 @@ public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.Ph
 
     private List<Photo> photos = new ArrayList<>();
     private Context context;
+    private PhotosListFragment.OnPhotoSelected photoSelectedCallback;
 
-    public PhotosListAdapter(Context context) {
+    public PhotosListAdapter(Context context, PhotosListFragment.OnPhotoSelected photoSelectedCallback) {
         this.context = context;
+        this.photoSelectedCallback = photoSelectedCallback;
     }
 
     @Override
@@ -39,12 +41,19 @@ public class PhotosListAdapter extends RecyclerView.Adapter<PhotosListAdapter.Ph
 
     @Override
     public void onBindViewHolder(PhotoListViewHolder holder, int position) {
-        Photo photo = photos.get(position);
+        final Photo photo = photos.get(position);
         holder.titleTextView.setText(photo.getTitle());
         Picasso.
                 with(context)
                 .load(photo.getSizes().get(0).getSource())
                 .into(holder.imageView);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photoSelectedCallback.photoSelected(Long.toString(photo.getId()));
+            }
+        });
     }
 
     @Override

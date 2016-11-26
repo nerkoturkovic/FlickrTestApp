@@ -18,6 +18,8 @@ public class PhotosListContract {
         void showPhotos(List<Photo> photos);
 
         void hideProgressBar();
+
+        void showPhotoInGallery(String photoId);
     }
 
     public interface Presenter extends BasePresenter {

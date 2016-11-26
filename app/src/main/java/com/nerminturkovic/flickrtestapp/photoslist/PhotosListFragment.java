@@ -1,5 +1,6 @@
 package com.nerminturkovic.flickrtestapp.photoslist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.ProgressBar;
 
 import com.nerminturkovic.flickrtestapp.R;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
+import com.nerminturkovic.flickrtestapp.photogallery.PhotoGalleryActivity;
 
 import java.util.List;
 
@@ -30,6 +32,13 @@ public class PhotosListFragment extends Fragment implements PhotosListContract.P
     RecyclerView recyclerView;
     @BindView(R.id.photos_list_loading_bar)
     ProgressBar progressBar;
+
+    private OnPhotoSelected photoSelectedCallback = new OnPhotoSelected() {
+        @Override
+        public void photoSelected(String photoId) {
+            showPhotoInGallery(photoId);
+        }
+    };
 
     private PhotosListAdapter adapter;
     
@@ -60,7 +69,7 @@ public class PhotosListFragment extends Fragment implements PhotosListContract.P
 
         ButterKnife.bind(this, rootView);
 
-        adapter = new PhotosListAdapter(getContext());
+        adapter = new PhotosListAdapter(getContext(), photoSelectedCallback);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -85,5 +94,17 @@ public class PhotosListFragment extends Fragment implements PhotosListContract.P
     @Override
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showPhotoInGallery(String photoId) {
+        Intent intent = new Intent(getContext(), PhotoGalleryActivity.class);
+        intent.putExtra(PhotoGalleryActivity.PHOTO_ID, photoId);
+        startActivity(intent);
+    }
+
+
+    public interface OnPhotoSelected {
+        void photoSelected(String photoId);
     }
 }

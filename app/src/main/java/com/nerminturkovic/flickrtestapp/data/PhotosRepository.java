@@ -1,6 +1,12 @@
 package com.nerminturkovic.flickrtestapp.data;
 
+import android.content.Context;
+
+import com.nerminturkovic.flickrtestapp.data.local.PhotosLocalDataSource;
+import com.nerminturkovic.flickrtestapp.data.local.database.PhotosDBHelper;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
+import com.nerminturkovic.flickrtestapp.data.remote.PhotosRemoteDataSource;
+import com.nerminturkovic.flickrtestapp.data.remote.RemoteServices;
 
 import java.util.List;
 
@@ -14,16 +20,35 @@ import rx.functions.Func1;
 
 public class PhotosRepository implements PhotosDataSource {
 
+    private static PhotosRepository instance;
+
     private PhotosDataSource localDataSource;
     private PhotosDataSource remoteDataSource;
 
-    public PhotosRepository(PhotosDataSource localDataSource, PhotosDataSource remoteDataSource) {
-        this.localDataSource = localDataSource;
-        this.remoteDataSource = remoteDataSource;
+    private List<Photo> photos;
+
+    private PhotosRepository(Context context) {
+        // Ideally these 2 datasources and the repository would be injected
+        localDataSource = new PhotosLocalDataSource(new PhotosDBHelper(context));
+        remoteDataSource = new PhotosRemoteDataSource(RemoteServices.getInstance().getPhotosService());
+
+    }
+
+    public static PhotosRepository getInstance(Context context) {
+        if (instance == null) {
+            instance = new PhotosRepository(context);
+        }
+
+        return instance;
     }
 
     @Override
     public Observable<List<Photo>> getPhotos() {
+
+        if (photos != null && !photos.isEmpty()) {
+            return Observable.just(photos);
+        }
+
         Observable<List<Photo>> localObservable = localDataSource.getPhotos();
         Observable<List<Photo>> remoteObservable = remoteDataSource.getPhotos()
                 .flatMap(new Func1<List<Photo>, Observable<Photo>>() {
@@ -47,12 +72,23 @@ public class PhotosRepository implements PhotosDataSource {
                         return photos != null && !photos.isEmpty();
                     }
                 })
-                .first();
+                .first()
+                .doOnNext(new Action1<List<Photo>>() {
+                    @Override
+                    public void call(List<Photo> photos) {
+                        PhotosRepository.this.photos = photos;
+                    }
+                });
     }
 
     @Override
     public Observable<Photo> getPhoto(String photoId) {
-        throw new UnsupportedOperationException();
+        for (Photo photo : photos) {
+            if (photo.getId() == Long.valueOf(photoId)) {
+                return Observable.just(photo);
+            }
+        }
+        return Observable.empty();
     }
 
     @Override
