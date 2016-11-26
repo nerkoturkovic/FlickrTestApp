@@ -4,6 +4,8 @@ import com.nerminturkovic.flickrtestapp.BasePresenter;
 import com.nerminturkovic.flickrtestapp.BaseView;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
 
+import java.util.List;
+
 /**
  * Created by nerko on 26/11/16.
  */
@@ -16,5 +18,6 @@ public class PhotoGalleryContract {
 
     public interface Presenter extends BasePresenter {
         void loadPhoto(String photoId);
+        void loadPhotos(PhotoGalleryFragment.OnLoadPhotos callback);
     }
 }

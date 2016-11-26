@@ -4,6 +4,7 @@ import com.nerminturkovic.flickrtestapp.data.PhotosDataSource;
 import com.nerminturkovic.flickrtestapp.data.model.Photo;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -46,6 +47,20 @@ public class PhotoGalleryPresenter implements PhotoGalleryContract.Presenter {
                     @Override
                     public void call(Photo photo) {
                         view.showPhoto(photo);
+                    }
+                });
+    }
+
+    @Override
+    public void loadPhotos(final PhotoGalleryFragment.OnLoadPhotos callback) {
+        repository
+                .getPhotos()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Photo>>() {
+                    @Override
+                    public void call(List<Photo> photos) {
+                        callback.onLoadPhotos(photos);
                     }
                 });
     }

@@ -16,6 +16,8 @@ import com.nerminturkovic.flickrtestapp.data.model.Photo;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -25,12 +27,19 @@ import butterknife.ButterKnife;
 
 public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContract.PhotoGalleryView {
 
+    public interface OnLoadPhotos {
+        void onLoadPhotos(List<Photo> photoList);
+    }
+
     @BindView(R.id.image_view)
     ImageView imageView;
     @BindView(R.id.photo_progress_bar)
     ProgressBar progressBar;
 
     private String photoId;
+    private Photo currentPhoto;
+
+    private List<Photo> photos;
 
     private PhotoGalleryContract.Presenter presenter;
 
@@ -45,6 +54,13 @@ public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContra
         super.onCreate(savedInstanceState);
 
         photoId = getArguments().getString(PhotoGalleryActivity.PHOTO_ID);
+
+        presenter.loadPhotos(new OnLoadPhotos() {
+            @Override
+            public void onLoadPhotos(List<Photo> photoList) {
+                photos = photoList;
+            }
+        });
     }
 
     @Nullable
@@ -77,6 +93,7 @@ public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContra
     @Override
     public void showPhoto(Photo photo) {
         photoId = String.valueOf(photo.getId());
+        currentPhoto = photo;
         progressBar.setVisibility(View.VISIBLE);
         Picasso
                 .with(getContext())
@@ -84,7 +101,7 @@ public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContra
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
-                        hideProgressBar();
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -94,11 +111,6 @@ public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContra
                 });
     }
 
-    @Override
-    public void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
-    }
-
     private class CustomGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_MIN_DISTANCE = 120;
@@ -106,11 +118,20 @@ public class PhotoGalleryFragment extends Fragment implements PhotoGalleryContra
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (photos == null || photos.isEmpty()) {
+                return false;
+            }
+
+            int currentIndex = photos.indexOf(currentPhoto);
             if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                presenter.loadPhoto(String.valueOf(Integer.valueOf(photoId) + 1));
+                if (currentIndex < photos.size() - 2) {
+                    presenter.loadPhoto(String.valueOf(photos.get(currentIndex + 1).getId()));
+                }
                 return false; // Right to left
             }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                presenter.loadPhoto(String.valueOf(Integer.valueOf(photoId) - 1));
+                if (currentIndex > 0) {
+                    presenter.loadPhoto(String.valueOf(photos.get(currentIndex - 1).getId()));
+                }
                 return false; // Left to right
             }
 

@@ -28,7 +28,6 @@ public class PhotosRepository implements PhotosDataSource {
     private List<Photo> photos;
 
     private PhotosRepository(Context context) {
-        // Ideally these 2 datasources and the repository would be injected
         localDataSource = new PhotosLocalDataSource(new PhotosDBHelper(context));
         remoteDataSource = new PhotosRemoteDataSource(RemoteServices.getInstance().getPhotosService());
 
