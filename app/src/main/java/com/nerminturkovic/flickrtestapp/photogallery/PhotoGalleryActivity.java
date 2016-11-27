@@ -1,7 +1,6 @@
 package com.nerminturkovic.flickrtestapp.photogallery;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
@@ -21,7 +20,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gallery_layout);
+        setContentView(R.layout.gallery_main_layout);
 
         Bundle bundle = getIntent().getExtras();
         String photoId = bundle.getString(PHOTO_ID);

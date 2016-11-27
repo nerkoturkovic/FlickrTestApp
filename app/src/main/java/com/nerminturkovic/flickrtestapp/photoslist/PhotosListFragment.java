@@ -103,7 +103,6 @@ public class PhotosListFragment extends Fragment implements PhotosListContract.P
         startActivity(intent);
     }
 
-
     public interface OnPhotoSelected {
         void photoSelected(String photoId);
     }

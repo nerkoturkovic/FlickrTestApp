@@ -4,15 +4,10 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <ImageView
-        android:id="@+id/image_view"
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/gallery_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ProgressBar
-        android:id="@+id/photo_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
 
 </FrameLayout>
