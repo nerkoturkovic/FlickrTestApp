@@ -60,7 +60,6 @@ public class PhotoGalleryAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-//        super.destroyItem(container, position, object);
         container.removeView((View) object);
     }
 
